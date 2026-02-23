@@ -1,0 +1,265 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Slide Prompt Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <p class="eyebrow">Social Content Engine</p>
+    <h1>Your <span class="grad">10-Slide Post</span><br>Prompt Generator</h1>
+    <p class="subtitle">Fill in your niche details — get a complete, scroll-stopping post framework in seconds.</p>
+  </header>
+
+  <!-- Input Form -->
+  <div class="form-card">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Your Niche / Industry</label>
+        <input type="text" id="niche" placeholder="e.g. Personal Finance, Fitness, Marketing" />
+      </div>
+      <div class="form-group">
+        <label>Post Topic</label>
+        <input type="text" id="topic" placeholder="e.g. How to save $500/month on autopilot" />
+      </div>
+      <div class="form-group">
+        <label>Target Audience</label>
+        <input type="text" id="audience" placeholder="e.g. Millennials, small business owners" />
+      </div>
+      <div class="form-group">
+        <label>Desired CTA Goal</label>
+        <select id="cta">
+          <option value="follow">Follow / Save/ share</option>
+          <option value="share">Share the Post</option>
+          <option value="signup">Sign Up / Join Waitlist</option>
+          <option value="purchase">Buy a Product / Service</option>
+          <option value="DM">Send a DM</option>
+          <option value="save">Save for Later</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Platform</label>
+        <select id="platform">
+          <option value="Instagram">Instagram</option>
+          <option value="LinkedIn">LinkedIn</option>
+          <option value="TikTok">TikTok</option>
+          <option value="Twitter/X">Twitter / X</option>
+          <option value="Facebook">Facebook</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Tone of Voice</label>
+        <select id="tone">
+          <option value="friendly and conversational">Friendly & Conversational</option>
+          <option value="bold and motivational">Bold & Motivational</option>
+          <option value="educational and authoritative">Educational & Authoritative</option>
+          <option value="witty and humorous">Witty & Humorous</option>
+          <option value="empathetic and warm">Empathetic & Warm</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Key Points or Extra Context (optional)</label>
+        <textarea id="keypoints" placeholder="e.g. Focus on beginners, mention compound interest, avoid jargon..."></textarea>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="generatePrompt()">
+      Generate My Post Framework
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>Crafting your content framework...</p>
+  </div>
+
+  <!-- Output -->
+  <div id="output">
+
+    <div class="output-header">
+      <p class="output-title">Your Content Framework</p>
+    </div>
+
+    <!-- Generated Prompt Preview -->
+    <div class="prompt-box">
+      <div class="prompt-box-label">
+        Reusable Master Prompt
+        <button class="btn btn-copy" onclick="copyText('promptText', this)">Copy Prompt</button>
+      </div>
+      <div class="prompt-box-text" id="promptText"></div>
+    </div>
+
+    <!-- Copy All -->
+    <div class="copy-all-bar">
+      <div class="copy-all-text"><strong>Ready to post?</strong> Copy the entire framework to your notes or Notion.</div>
+      <button class="btn-copy-all" onclick="copyAll()">Copy Everything</button>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="toast" id="toast">Copied to clipboard!</div>
+
+<script>
+function generatePrompt() {
+  const niche = document.getElementById('niche').value.trim();
+  const topic = document.getElementById('topic').value.trim();
+  const audience = document.getElementById('audience').value.trim();
+  const cta = document.getElementById('cta').value;
+  const platform = document.getElementById('platform').value;
+  const tone = document.getElementById('tone').value;
+  const keypoints = document.getElementById('keypoints').value.trim();
+
+  if (!niche || !topic) {
+    alert('Please fill in at least your Niche and Post Topic.');
+    return;
+  }
+
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('output').style.display = 'none';
+
+  setTimeout(() => buildOutput(niche, topic, audience, cta, platform, tone, keypoints), 600);
+}
+
+function buildOutput(niche, topic, audience, cta, platform, tone, keypoints) {
+  const ctaMap = {
+    follow: 'follow for more content like this',
+    share: 'share this post with someone who needs it',
+    signup: 'sign up / join the waitlist',
+    purchase: 'check out the product / service',
+    DM: 'send a DM to learn more',
+    save: 'save this post for later reference',
+  };
+  const ctaLabel = ctaMap[cta];
+  const aud = audience || 'your ideal audience';
+
+  // Master reusable prompt
+  const masterPrompt = `You are an expert social media content creator specializing in [NICHE]. Create a compelling 10-slide carousel post about: [TOPIC]
+
+Audience: [TARGET AUDIENCE]
+Platform: [PLATFORM]
+Tone: [TONE OF VOICE]
+CTA Goal: [DESIRED ACTION]
+${keypoints ? `Extra context: [KEY POINTS / CONTEXT]\n` : ''}
+Structure the output exactly as follows:
+
+SLIDE 1 — HOOK
+Write a magnetic, pattern-interrupting opener (1–3 lines). Use a bold statement, surprising statistic, relatable pain point, or provocative question. No fluff — make them stop scrolling immediately.
+
+SLIDES 2–6 — CONTENT (one slide per insight)
+Each slide = one clear, actionable idea. Keep it to 2–4 lines per slide. Use simple language, no jargon. Build on the hook and deliver genuine value. Number each slide.
+
+SLIDE 7 — ENGAGEMENT
+Ask a question or prompt that invites comments, opinions, or a poll response. Make it easy and compelling to answer. Connect it back to the topic.
+
+SLIDES 8 — CTA (three distinct approaches)
+Write 3 psychologically different CTAs that motivate [DESIRED ACTION]. Use scarcity, social proof, curiosity, or transformation framing. Each should feel natural — not salesy.
+
+After slide content, also generate:
+
+5) **Caption:**
+- A polished, relatable caption that summarizes key takeaways.
+- Include a natural conversational hook in the first line.
+- End with a clear invitation to comment or take action.
+- Add line breaks for readability.
+
+6) **Practical posting tips:**
+- Recommend best posting windows for [PLATFORM].
+- Provide hashtag strategy (mix of broad, niche, and intent-based tags) with sample hashtags.
+- Give formatting tips to maximize retention and readability.
+- Share 3 tactics to increase reach and interaction after posting.
+`;
+
+  // Filled prompt for THIS generation
+  const filledPrompt = masterPrompt
+    .replace('[NICHE]', niche)
+    .replace('[TOPIC]', topic)
+    .replace('[TARGET AUDIENCE]', aud)
+    .replace('[PLATFORM]', platform)
+    .replace('[TONE OF VOICE]', tone)
+    .replace('[DESIRED ACTION]', ctaLabel)
+    .replace('[KEY POINTS / CONTEXT]', keypoints)
+    .replace('[DESIRED ACTION]', ctaLabel)
+    .replace('[PLATFORM]', platform);
+
+  document.getElementById('promptText').textContent = filledPrompt;
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('output').style.display = 'block';
+  document.getElementById('output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  let ok = false;
+  try {
+    ok = document.execCommand('copy');
+  } catch {
+    ok = false;
+  }
+  document.body.removeChild(ta);
+  return ok;
+}
+
+async function copyToClipboard(text) {
+  if (!text) return false;
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // Fall through to legacy copy method.
+    }
+  }
+  return fallbackCopy(text);
+}
+
+function copyText(id, btn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  copyToClipboard(el.textContent).then((ok) => {
+    const orig = btn.textContent;
+    btn.textContent = ok ? 'Copied!' : 'Copy Failed';
+    btn.style.color = ok ? '#0c8f83' : '#c7542f';
+    btn.style.borderColor = ok ? '#0c8f83' : '#c7542f';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 2000);
+  });
+}
+
+function copyAll() {
+  const promptText = document.getElementById('promptText')?.textContent || '';
+  const fullText = `=== MASTER REUSABLE PROMPT ===\n${promptText}`;
+  copyToClipboard(fullText).then((ok) => {
+    const toast = document.getElementById('toast');
+    toast.textContent = ok ? 'Copied to clipboard!' : 'Copy failed.';
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+      toast.textContent = 'Copied to clipboard!';
+    }, 2500);
+  });
+}
+</script>
+</body>
+</html>
+
+
